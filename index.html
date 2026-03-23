@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Big Brother Jill Foundation | Mentorship. Mindset. Movement.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A028;
+      --gold-light: #E8C04A;
+      --gold-dark: #9A7A1A;
+      --black: #080808;
+      --dark: #111111;
+      --dark2: #1A1A1A;
+      --dark3: #242424;
+      --white: #F5F0E8;
+      --gray: #8A8A8A;
+      --light-gray: #C0B9A8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--dark); }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 4rem;
+      transition: background 0.4s, backdrop-filter 0.4s;
+    }
+    nav.scrolled {
+      background: rgba(8, 8, 8, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(201, 160, 40, 0.15);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+    .nav-logo img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+    }
+    .nav-logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+    }
+    .nav-logo-text span { color: var(--gold); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--light-gray);
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      background: var(--gold);
+      color: var(--black) !important;
+      padding: 0.6rem 1.4rem;
+      border-radius: 2px;
+      font-weight: 700 !important;
+      letter-spacing: 0.06em;
+      transition: background 0.3s !important;
+    }
+    .nav-cta:hover { background: var(--gold-light) !important; color: var(--black) !important; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; }
+    .hamburger span { width: 26px; height: 2px; background: var(--white); border-radius: 2px; transition: all 0.3s; }
+
+    /* ─── HERO ─── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+    .hero-video-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+    .hero-video-bg video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.35;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(8, 8, 8, 0.85) 0%,
+        rgba(8, 8, 8, 0.6) 50%,
+        rgba(8, 8, 8, 0.9) 100%
+      );
+      z-index: 1;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 4rem;
+      padding-top: 7rem;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(201, 160, 40, 0.12);
+      border: 1px solid rgba(201, 160, 40, 0.4);
+      color: var(--gold-light);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.45rem 1rem;
+      border-radius: 2px;
+      margin-bottom: 2rem;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+    }
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-weight: 900;
+      line-height: 1.0;
+      margin-bottom: 1.5rem;
+      color: var(--white);
+    }
+    .hero-title .gold { color: var(--gold); }
+    .hero-title .outline {
+      -webkit-text-stroke: 2px var(--gold);
+      color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 1.15rem;
+      color: var(--light-gray);
+      max-width: 560px;
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 4rem;
+    }
+    .btn-primary {
+      display: inline-block;
+      background: var(--gold);
+      color: var(--black);
+      padding: 1rem 2.2rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-outline {
+      display: inline-block;
+      border: 1.5px solid rgba(201, 160, 40, 0.5);
+      color: var(--gold-light);
+      padding: 1rem 2.2rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .btn-outline:hover { border-color: var(--gold); background: rgba(201, 160, 40, 0.08); }
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      padding-top: 3rem;
+      border-top: 1px solid rgba(201, 160, 40, 0.15);
+    }
+    .hero-stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .hero-stat-label {
+      font-size: 0.75rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.3rem;
+    }
+    .hero-image-float {
+      position: absolute;
+      right: 4rem;
+      bottom: 0;
+      z-index: 2;
+      width: 380px;
+    }
+    .hero-image-float img {
+      width: 100%;
+      height: 560px;
+      object-fit: cover;
+      object-position: top;
+      mask-image: linear-gradient(to top, transparent 0%, black 25%, black 85%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to top, transparent 0%, black 25%, black 85%, transparent 100%);
+    }
+    .scroll-indicator {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gray);
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.1); }
+    }
+
+    /* ─── SECTION BASE ─── */
+    section { padding: 6rem 4rem; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 900;
+      line-height: 1.15;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+    .section-desc {
+      font-size: 1rem;
+      color: var(--gray);
+      line-height: 1.8;
+      max-width: 580px;
+    }
+
+    /* ─── MARQUEE ─── */
+    .marquee-section {
+      background: var(--gold);
+      padding: 1.2rem 0;
+      overflow: hidden;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      animation: marquee 20s linear infinite;
+      white-space: nowrap;
+    }
+    .marquee-item {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--black);
+      padding: 0 2.5rem;
+      letter-spacing: 0.05em;
+    }
+    .marquee-sep { color: rgba(0,0,0,0.35); }
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ─── PROBLEM ─── */
+    #problem { background: var(--dark); }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      margin-top: 4rem;
+    }
+    .problem-image-stack {
+      position: relative;
+      height: 540px;
+    }
+    .problem-img-main {
+      position: absolute;
+      top: 0; left: 0;
+      width: 78%;
+      height: 420px;
+      object-fit: cover;
+      border-radius: 2px;
+      filter: grayscale(20%);
+    }
+    .problem-img-accent {
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 55%;
+      height: 260px;
+      object-fit: cover;
+      border-radius: 2px;
+      border: 4px solid var(--dark);
+    }
+    .problem-gold-bar {
+      position: absolute;
+      top: 2rem;
+      right: 1rem;
+      width: 4px;
+      height: 80px;
+      background: var(--gold);
+    }
+    .problem-stat-badge {
+      position: absolute;
+      bottom: 2rem;
+      left: -1.5rem;
+      background: var(--gold);
+      color: var(--black);
+      padding: 1.2rem 1.5rem;
+      border-radius: 2px;
+      z-index: 2;
+    }
+    .problem-stat-badge .num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .problem-stat-badge .label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.2rem;
+    }
+    .problem-points { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem; }
+    .problem-point {
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+    }
+    .problem-point-icon {
+      flex-shrink: 0;
+      width: 42px;
+      height: 42px;
+      background: rgba(201, 160, 40, 0.1);
+      border: 1px solid rgba(201, 160, 40, 0.3);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+    .problem-point-text h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+    .problem-point-text p {
+      font-size: 0.87rem;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* ─── MISSION ─── */
+    #mission {
+      background: var(--black);
+      position: relative;
+      overflow: hidden;
+    }
+    #mission::before {
+      content: '';
+      position: absolute;
+      top: -200px; right: -200px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(201, 160, 40, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .mission-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+    .mission-text { }
+    .mission-quote {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-style: italic;
+      color: var(--gold-light);
+      line-height: 1.5;
+      margin: 2rem 0;
+      padding-left: 1.5rem;
+      border-left: 3px solid var(--gold);
+    }
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(201, 160, 40, 0.15);
+      border: 1px solid rgba(201, 160, 40, 0.15);
+      border-radius: 2px;
+    }
+    .pillar {
+      background: var(--dark2);
+      padding: 1.8rem;
+      transition: background 0.3s;
+    }
+    .pillar:hover { background: var(--dark3); }
+    .pillar-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: rgba(201, 160, 40, 0.2);
+      line-height: 1;
+      margin-bottom: 0.6rem;
+    }
+    .pillar h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.4rem;
+    }
+    .pillar p {
+      font-size: 0.82rem;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* ─── PROGRAMS ─── */
+    #programs { background: var(--dark); }
+    .programs-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 3.5rem;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+    .programs-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5px;
+      background: rgba(201, 160, 40, 0.1);
+    }
+    .program-card {
+      background: var(--dark2);
+      padding: 2.5rem 2rem;
+      transition: background 0.3s, transform 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .program-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 2px;
+      width: 0;
+      background: var(--gold);
+      transition: width 0.4s;
+    }
+    .program-card:hover { background: var(--dark3); transform: translateY(-3px); }
+    .program-card:hover::after { width: 100%; }
+    .program-icon {
+      font-size: 2rem;
+      margin-bottom: 1.2rem;
+    }
+    .program-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 0.8rem;
+      line-height: 1.3;
+    }
+    .program-card p {
+      font-size: 0.85rem;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+    .program-tag {
+      display: inline-block;
+      margin-top: 1.2rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border-bottom: 1px solid rgba(201, 160, 40, 0.3);
+      padding-bottom: 1px;
+    }
+
+    /* ─── OUTCOMES ─── */
+    #outcomes { background: var(--black); }
+    .outcomes-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .outcomes-image {
+      position: relative;
+    }
+    .outcomes-image img {
+      width: 100%;
+      border-radius: 2px;
+    }
+    .outcomes-image-glow {
+      position: absolute;
+      inset: -20px;
+      background: radial-gradient(circle at 50% 50%, rgba(201, 160, 40, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .outcomes-list { display: flex; flex-direction: column; gap: 1.8rem; margin-top: 2rem; }
+    .outcome-item {
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+    }
+    .outcome-check {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      background: var(--gold);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .outcome-check svg { width: 12px; height: 12px; }
+    .outcome-item h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.3rem;
+    }
+    .outcome-item p {
+      font-size: 0.85rem;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* ─── FOUNDER ─── */
+    #founder { background: var(--dark); }
+    .founder-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+    .founder-image-wrap {
+      position: relative;
+    }
+    .founder-img {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 2px;
+    }
+    .founder-gold-corner {
+      position: absolute;
+      top: -12px; right: -12px;
+      width: 60px; height: 60px;
+      border-top: 3px solid var(--gold);
+      border-right: 3px solid var(--gold);
+    }
+    .founder-gold-corner-bl {
+      position: absolute;
+      bottom: -12px; left: -12px;
+      width: 60px; height: 60px;
+      border-bottom: 3px solid var(--gold);
+      border-left: 3px solid var(--gold);
+    }
+    .founder-text .section-title { margin-bottom: 0.5rem; }
+    .founder-role {
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+    }
+    .founder-bio {
+      font-size: 1rem;
+      color: var(--light-gray);
+      line-height: 1.85;
+      margin-bottom: 1.5rem;
+    }
+    .founder-credentials {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(201, 160, 40, 0.15);
+    }
+    .credential {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      font-size: 0.87rem;
+      color: var(--light-gray);
+    }
+    .credential::before {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+
+    /* ─── CTA BANNER ─── */
+    #cta {
+      background: var(--gold);
+      padding: 5rem 4rem;
+      text-align: center;
+    }
+    #cta .section-label { color: rgba(0,0,0,0.5); }
+    #cta .section-title { color: var(--black); max-width: 700px; margin: 0 auto 1rem; }
+    #cta .section-desc { color: rgba(0,0,0,0.6); margin: 0 auto 2.5rem; max-width: 520px; }
+    .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-dark {
+      display: inline-block;
+      background: var(--black);
+      color: var(--gold);
+      padding: 1rem 2.2rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-dark:hover { background: var(--dark2); transform: translateY(-2px); }
+    .btn-white-outline {
+      display: inline-block;
+      border: 1.5px solid rgba(0,0,0,0.3);
+      color: var(--black);
+      padding: 1rem 2.2rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: background 0.3s;
+    }
+    .btn-white-outline:hover { background: rgba(0,0,0,0.08); }
+
+    /* ─── CONNECT ─── */
+    #connect { background: var(--dark2); padding: 4rem; }
+    .connect-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+    .connect-brand .section-title { font-size: 1.8rem; }
+    .connect-brand p { font-size: 0.87rem; color: var(--gray); margin-top: 0.8rem; line-height: 1.7; }
+    .connect-info h4 {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+    .connect-info ul { list-style: none; display: flex; flex-direction: column; gap: 0.8rem; }
+    .connect-info ul li {
+      font-size: 0.9rem;
+      color: var(--light-gray);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .connect-info ul li span { color: var(--gold); font-weight: 600; }
+    .connect-social h4 {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+    .social-links { display: flex; flex-direction: column; gap: 0.8rem; }
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      text-decoration: none;
+      color: var(--light-gray);
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+    .social-link:hover { color: var(--gold); }
+    .social-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(201, 160, 40, 0.1);
+      border: 1px solid rgba(201, 160, 40, 0.2);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: background 0.3s;
+    }
+    .social-link:hover .social-icon { background: rgba(201, 160, 40, 0.2); }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--black);
+      border-top: 1px solid rgba(201, 160, 40, 0.1);
+      padding: 2rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    footer p {
+      font-size: 0.78rem;
+      color: var(--gray);
+    }
+    footer .gold { color: var(--gold); }
+
+    /* ─── ANIMATIONS ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── MOBILE NAV ─── */
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8,8,8,0.97);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+    .mobile-nav.open { display: flex; }
+    .mobile-nav a {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--white);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .mobile-nav a:hover { color: var(--gold); }
+    .mobile-close {
+      position: absolute;
+      top: 2rem; right: 2rem;
+      font-size: 2rem;
+      cursor: pointer;
+      color: var(--gray);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      nav { padding: 1.2rem 2rem; }
+      section { padding: 5rem 2rem; }
+      .hero-content { padding: 0 2rem; padding-top: 7rem; }
+      .hero-image-float { display: none; }
+      .problem-grid,
+      .mission-layout,
+      .outcomes-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .founder-layout { grid-template-columns: 1fr; }
+      .founder-image-wrap { max-width: 400px; }
+      .programs-grid { grid-template-columns: 1fr 1fr; }
+      .connect-grid { grid-template-columns: 1fr; }
+      .problem-image-stack { height: 380px; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .hero-title { font-size: 2.8rem; }
+      .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+      .programs-grid { grid-template-columns: 1fr; }
+      .pillars-grid { grid-template-columns: 1fr; }
+      footer { padding: 2rem; flex-direction: column; text-align: center; }
+      #cta { padding: 4rem 2rem; }
+      #connect { padding: 3rem 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- MOBILE NAV OVERLAY -->
+<div class="mobile-nav" id="mobileNav">
+  <span class="mobile-close" onclick="toggleNav()">&#x2715;</span>
+  <a href="#problem" onclick="toggleNav()">The Problem</a>
+  <a href="#mission" onclick="toggleNav()">Mission</a>
+  <a href="#programs" onclick="toggleNav()">Programs</a>
+  <a href="#founder" onclick="toggleNav()">Founder</a>
+  <a href="#connect" onclick="toggleNav()">Connect</a>
+  <a href="#cta" class="btn-primary" onclick="toggleNav()">Get Involved</a>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">
+    <img src="img/IMG_7769.jpeg" alt="Big Brother Jill Foundation Logo" />
+    <div class="nav-logo-text">Big Brother Jill<br><span>Foundation</span></div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#problem">The Problem</a></li>
+    <li><a href="#mission">Mission</a></li>
+    <li><a href="#programs">Programs</a></li>
+    <li><a href="#founder">Founder</a></li>
+    <li><a href="#cta" class="nav-cta">Get Involved</a></li>
+  </ul>
+  <div class="hamburger" onclick="toggleNav()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-video-bg">
+    <video autoplay muted loop playsinline>
+      <source src="img/_users_49abd772-4b56-44d9-b5b1-8aed1c1eed50_generated_ab97b24a-a5eb-4143-bcd3-d6e8ecc2d1a4_generated_video.mp4" type="video/mp4" />
+    </video>
+  </div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">Big Brother Jill Foundation</div>
+    <h1 class="hero-title">
+      Healing.<br>
+      <span class="gold">Identity.</span><br>
+      <span class="outline">Purpose.</span>
+    </h1>
+    <p class="hero-subtitle">
+      Guiding young Black boys and men from underserved communities toward healing, self-discovery, and purpose-driven living through culturally grounded mentorship.
+    </p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn-primary">Join the Movement</a>
+      <a href="#mission" class="btn-outline">Our Mission</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">5+</div>
+        <div class="hero-stat-label">Signature Programs</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">Ages<br style="line-height:0"/> 11–25</div>
+        <div class="hero-stat-label">Youth Served</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">3</div>
+        <div class="hero-stat-label">Core Pillars</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-image-float">
+    <img src="img/IMG_7852.png" alt="Brother Jill" />
+  </div>
+
+  <div class="scroll-indicator">
+    <div class="scroll-line"></div>
+    Scroll
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <span class="marquee-item">Mentorship <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Mindset <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Movement <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Healing <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Identity <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Purpose <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Brotherhood <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Execution <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Mentorship <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Mindset <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Movement <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Healing <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Identity <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Purpose <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Brotherhood <span class="marquee-sep">✦</span></span>
+    <span class="marquee-item">Execution <span class="marquee-sep">✦</span></span>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="container">
+    <div class="problem-grid">
+      <div class="problem-image-stack reveal">
+        <img class="problem-img-main" src="img/IMG_7821.jpeg" alt="Brother Jill" />
+        <img class="problem-img-accent" src="img/unnamed.png" alt="Programs Overview" />
+        <div class="problem-gold-bar"></div>
+        <div class="problem-stat-badge">
+          <div class="num">1 in 3</div>
+          <div class="label">Black boys face<br>incarceration risk</div>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <div class="section-label">The Problem</div>
+        <h2 class="section-title">The system was<br>never built for them.</h2>
+        <p class="section-desc">Young Black men face compounding systems of trauma, neglect, and criminalization. Without culturally grounded intervention, the cycle continues.</p>
+
+        <div class="problem-points">
+          <div class="problem-point">
+            <div class="problem-point-icon">⚠️</div>
+            <div class="problem-point-text">
+              <h4>Systemic Criminalization</h4>
+              <p>Schools and institutions often punish rather than support Black youth, pushing them out instead of lifting them up.</p>
+            </div>
+          </div>
+          <div class="problem-point">
+            <div class="problem-point-icon">💔</div>
+            <div class="problem-point-text">
+              <h4>Unaddressed Trauma</h4>
+              <p>High exposure to community violence, loss, and systemic racism creates deep emotional wounds that go untreated.</p>
+            </div>
+          </div>
+          <div class="problem-point">
+            <div class="problem-point-icon">🚫</div>
+            <div class="problem-point-text">
+              <h4>Cultural Disconnection</h4>
+              <p>The absence of programs rooted in lived Black experience leaves youth without the mirrors they need to see themselves fully.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MISSION -->
+<section id="mission">
+  <div class="container">
+    <div class="mission-layout">
+      <div class="reveal">
+        <div class="section-label">Our Mission</div>
+        <h2 class="section-title">We build men,<br>not just moments.</h2>
+        <blockquote class="mission-quote">
+          "You are not behind — you are becoming."
+        </blockquote>
+        <p class="section-desc" style="max-width:100%">
+          To guide young Black boys and men from underserved communities toward healing, self-discovery, and purpose-driven living through culturally grounded mentorship and mindset development. We envision a world where healing is normalized, purpose is pursued, and legacy is built through self-awareness and accountability.
+        </p>
+        <br />
+        <a href="#programs" class="btn-outline" style="margin-top:1rem">See Our Programs</a>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <div class="section-label" style="margin-bottom:1.5rem">Our Five Pillars</div>
+        <div class="pillars-grid">
+          <div class="pillar">
+            <div class="pillar-num">01</div>
+            <h4>Healing</h4>
+            <p>Emotional intelligence, trauma awareness, and mental wellness as the foundation for everything else.</p>
+          </div>
+          <div class="pillar">
+            <div class="pillar-num">02</div>
+            <h4>Identity</h4>
+            <p>Cultural pride, self-worth, and the power of personal narrative to reshape destiny.</p>
+          </div>
+          <div class="pillar">
+            <div class="pillar-num">03</div>
+            <h4>Purpose</h4>
+            <p>Goal-setting, career pathways, and building a vision for life that transcends circumstance.</p>
+          </div>
+          <div class="pillar">
+            <div class="pillar-num">04</div>
+            <h4>Brotherhood</h4>
+            <p>Community, mentorship, and accountability through the strength of unified bonds.</p>
+          </div>
+          <div class="pillar" style="grid-column: span 2;">
+            <div class="pillar-num">05</div>
+            <h4>Execution</h4>
+            <p>Discipline, consistency, and real-world skills to turn vision into reality.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMS -->
+<section id="programs">
+  <div class="container">
+    <div class="programs-header">
+      <div class="reveal">
+        <div class="section-label">Signature Programs</div>
+        <h2 class="section-title">Where transformation<br>actually happens.</h2>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <p class="section-desc">Every program is rooted in lived experience, cultural authenticity, and measurable change.</p>
+      </div>
+    </div>
+
+    <div class="programs-grid">
+      <div class="program-card reveal">
+        <div class="program-icon">🧠</div>
+        <h3>'Get Ya Mind Right' Curriculum</h3>
+        <p>A structured mindset development program covering emotional regulation, decision-making frameworks, and the psychology of growth.</p>
+        <span class="program-tag">Mindset &amp; Leadership</span>
+      </div>
+      <div class="program-card reveal reveal-delay-1">
+        <div class="program-icon">✍🏿</div>
+        <h3>'You Ain't Broken' Journaling Workshops</h3>
+        <p>Safe, guided journaling sessions where young men explore their stories, reframe trauma narratives, and discover their voice.</p>
+        <span class="program-tag">Healing &amp; Identity</span>
+      </div>
+      <div class="program-card reveal reveal-delay-2">
+        <div class="program-icon">🔵</div>
+        <h3>'Save Yo Self' Circles</h3>
+        <p>Peer-led healing and conflict resolution circles that build accountability, empathy, and collective problem-solving.</p>
+        <span class="program-tag">Brotherhood</span>
+      </div>
+      <div class="program-card reveal">
+        <div class="program-icon">📚</div>
+        <h3>Brother Jill Book Club for Boys</h3>
+        <p>Curated reading experiences featuring authors and stories that reflect, challenge, and expand young Black men's worldview.</p>
+        <span class="program-tag">Identity &amp; Purpose</span>
+      </div>
+      <div class="program-card reveal reveal-delay-1">
+        <div class="program-icon">💡</div>
+        <h3>Creative Hustle Labs</h3>
+        <p>Entrepreneurship and storytelling workshops that turn creative energy into real skills, projects, and economic opportunity.</p>
+        <span class="program-tag">Execution &amp; Purpose</span>
+      </div>
+      <div class="program-card reveal reveal-delay-2" style="background: linear-gradient(135deg, rgba(201,160,40,0.12), rgba(201,160,40,0.05)); border: 1px solid rgba(201,160,40,0.2);">
+        <div class="program-icon">🤝</div>
+        <h3>1:1 Mentorship & Group Circles</h3>
+        <p>Consistent, relationship-based mentorship with weekly check-ins and monthly goal tracking to ensure no young man walks alone.</p>
+        <span class="program-tag">Mentorship</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUTCOMES -->
+<section id="outcomes">
+  <div class="container">
+    <div class="outcomes-layout">
+      <div class="reveal">
+        <div class="section-label">Measurable Impact</div>
+        <h2 class="section-title">Real change.<br>Measured results.</h2>
+        <p class="section-desc">We don't just inspire — we track transformation. Every program produces outcomes that can be seen, felt, and measured.</p>
+
+        <div class="outcomes-list">
+          <div class="outcome-item">
+            <div class="outcome-check">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <h4>Emotional Growth Tracking</h4>
+              <p>Pre/post workshop reflections document each participant's emotional and mindset shifts over time.</p>
+            </div>
+          </div>
+          <div class="outcome-item">
+            <div class="outcome-check">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <h4>Reduced Behavioral Incidents</h4>
+              <p>Partner schools report measurable reductions in disciplinary actions among program participants.</p>
+            </div>
+          </div>
+          <div class="outcome-item">
+            <div class="outcome-check">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <h4>Financial Literacy Gains</h4>
+              <p>Youth demonstrate increased understanding of money, business, and economic empowerment principles.</p>
+            </div>
+          </div>
+          <div class="outcome-item">
+            <div class="outcome-check">
+              <svg viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#080808" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <h4>Youth-Led Community Projects</h4>
+              <p>Participants launch real initiatives that impact their peers, families, and communities.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="outcomes-image reveal reveal-delay-2">
+        <div class="outcomes-image-glow"></div>
+        <img src="img/IMG_7767.jpeg" alt="Save Your Self Program" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section id="founder">
+  <div class="container">
+    <div class="founder-layout">
+      <div class="founder-image-wrap reveal">
+        <div class="founder-gold-corner"></div>
+        <div class="founder-gold-corner-bl"></div>
+        <img class="founder-img" src="img/IMG_7852.png" alt="Brother Jill — Founder" />
+      </div>
+
+      <div class="founder-text reveal reveal-delay-2">
+        <div class="section-label">About the Founder</div>
+        <h2 class="section-title">Brother Jill</h2>
+        <div class="founder-role">Cultural Educator &bull; Movement Builder &bull; Founder</div>
+        <p class="founder-bio">
+          Brother Jill is a cultural educator and movement builder rooted in truth, healing, and transformation. From lived experience to leadership, he built the Big Brother Jill Foundation to bridge wisdom, wellness, and worth for a new generation of young kings.
+        </p>
+        <p class="founder-bio">
+          His work is not theory — it is lived. Every program he creates, every circle he facilitates, and every conversation he holds is shaped by the understanding that healing must come before achievement, and that identity is the foundation of everything.
+        </p>
+        <div class="founder-credentials">
+          <div class="credential">Founder — Big Brother Jill Foundation</div>
+          <div class="credential">Creator — Save Your Self (S.Y.S.) Program</div>
+          <div class="credential">Cultural Educator &amp; Mindset Development Coach</div>
+          <div class="credential">Emotional Intelligence &amp; Leadership Development</div>
+          <div class="credential">Workforce Readiness &amp; Career Pathways Facilitator</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container">
+    <div class="section-label">Join the Movement</div>
+    <h2 class="section-title">Invest in the next generation.</h2>
+    <p class="section-desc">Partner. Donate. Sponsor. Mentor. Every role you play helps us build a legacy of healed, empowered young Black men.</p>
+    <div class="cta-actions">
+      <a href="mailto:connect@bigbrotherjill.org" class="btn-dark">Become a Partner</a>
+      <a href="mailto:connect@bigbrotherjill.org" class="btn-white-outline">Donate Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- CONNECT -->
+<section id="connect">
+  <div class="container">
+    <div class="connect-grid">
+      <div class="connect-brand reveal">
+        <img src="img/IMG_7769.jpeg" alt="Logo" style="width:64px; margin-bottom:1rem; border-radius:2px;" />
+        <h3 class="section-title" style="font-size:1.6rem;">Big Brother Jill<br>Foundation</h3>
+        <p>Mentorship. Mindset. Movement.<br>Building strong men from within.</p>
+      </div>
+
+      <div class="connect-info reveal reveal-delay-1">
+        <h4>Get in Touch</h4>
+        <ul>
+          <li><span>Email</span> connect@bigbrotherjill.org</li>
+          <li><span>Cash App</span> $BrotherJillFoundation</li>
+          <li><span>Instagram</span> @BigBrotherJill</li>
+        </ul>
+      </div>
+
+      <div class="connect-social reveal reveal-delay-2">
+        <h4>Follow the Movement</h4>
+        <div class="social-links">
+          <a href="#" class="social-link">
+            <div class="social-icon">📸</div>
+            @BigBrotherJill on Instagram
+          </a>
+          <a href="#" class="social-link">
+            <div class="social-icon">🎵</div>
+            @BigBrotherJill on TikTok
+          </a>
+          <a href="#" class="social-link">
+            <div class="social-icon">▶️</div>
+            Big Brother Jill on YouTube
+          </a>
+          <a href="#" class="social-link">
+            <div class="social-icon">💼</div>
+            Big Brother Jill Foundation on LinkedIn
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 <span class="gold">Big Brother Jill Foundation</span>. All rights reserved.</p>
+  <p>Healing. Identity. Purpose. &mdash; <span class="gold">Mentorship. Mindset. Movement.</span></p>
+</footer>
+
+<script>
+  // NAV scroll effect
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // Mobile nav
+  function toggleNav() {
+    document.getElementById('mobileNav').classList.toggle('open');
+  }
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Smooth anchor clicks with nav offset
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        const offset = target.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: offset, behavior: 'smooth' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
