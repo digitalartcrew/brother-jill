@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Square Web Payments SDK — swap sandbox URL for production when going live -->
+  <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -834,6 +836,305 @@
       color: var(--gray);
     }
 
+    /* ─── DONATE MODAL ─── */
+    .sq-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .sq-modal-overlay.open { display: flex; }
+    .sq-modal {
+      background: var(--dark2);
+      border: 1px solid rgba(201,160,40,0.25);
+      border-radius: 4px;
+      width: 100%;
+      max-width: 520px;
+      padding: 2.5rem;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .sq-modal-close {
+      position: absolute;
+      top: 1.2rem; right: 1.5rem;
+      font-size: 1.5rem;
+      color: var(--gray);
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+    }
+    .sq-modal-close:hover { color: var(--white); }
+    .sq-modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 0.4rem;
+    }
+    .sq-modal-sub {
+      font-size: 0.85rem;
+      color: var(--gray);
+      margin-bottom: 1.8rem;
+      line-height: 1.6;
+    }
+
+    /* ─── DONATION AMOUNT PICKER ─── */
+    .amount-picker {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 1rem;
+    }
+    .amount-btn {
+      background: var(--dark3);
+      border: 1px solid rgba(201,160,40,0.2);
+      border-radius: 2px;
+      color: var(--light-gray);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.8rem 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .amount-btn:hover, .amount-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--black);
+    }
+    .custom-amount-wrap {
+      margin-bottom: 1.5rem;
+    }
+    .custom-amount-wrap input {
+      width: 100%;
+      background: var(--dark3);
+      border: 1px solid rgba(201,160,40,0.2);
+      border-radius: 2px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      padding: 0.8rem 1rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    .custom-amount-wrap input:focus { border-color: var(--gold); }
+    .custom-amount-wrap input::placeholder { color: var(--gray); }
+
+    /* ─── SQUARE CARD FORM ─── */
+    #card-container, #merch-card-container {
+      min-height: 90px;
+      margin-bottom: 1.2rem;
+    }
+    /* Square injects iframe — style the outer container */
+    .sq-card-wrapper {
+      background: var(--dark3);
+      border: 1px solid rgba(201,160,40,0.2);
+      border-radius: 2px;
+      padding: 0.5rem;
+      transition: border-color 0.3s;
+    }
+    .sq-card-wrapper:focus-within { border-color: var(--gold); }
+    .sq-field-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--light-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .sq-payment-status {
+      font-size: 0.82rem;
+      padding: 0.7rem 1rem;
+      border-radius: 2px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .sq-payment-status.error { background: rgba(220,50,50,0.12); border: 1px solid rgba(220,50,50,0.3); color: #ff7070; display: block; }
+    .sq-payment-status.success { background: rgba(40,200,100,0.1); border: 1px solid rgba(40,200,100,0.3); color: #60d090; display: block; }
+    .btn-square {
+      width: 100%;
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      border-radius: 2px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 1rem;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-square:hover:not(:disabled) { background: var(--gold-light); transform: translateY(-1px); }
+    .btn-square:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .sq-secure-note {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.72rem;
+      color: var(--gray);
+      margin-top: 0.8rem;
+      justify-content: center;
+    }
+    .sq-secure-note svg { flex-shrink: 0; }
+
+    /* ─── DONATION SECTION ─── */
+    #donate { background: var(--black); }
+    .donate-layout {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 5rem;
+      align-items: start;
+    }
+    .donate-impact { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem; }
+    .impact-item {
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+    }
+    .impact-num {
+      flex-shrink: 0;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--gold);
+      line-height: 1;
+      min-width: 60px;
+    }
+    .impact-item p {
+      font-size: 0.88rem;
+      color: var(--gray);
+      line-height: 1.6;
+      padding-top: 0.2rem;
+    }
+    .donate-card {
+      background: var(--dark2);
+      border: 1px solid rgba(201,160,40,0.18);
+      border-radius: 4px;
+      padding: 2.5rem;
+    }
+    .donate-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--white);
+      margin-bottom: 0.4rem;
+    }
+    .donate-card .sub {
+      font-size: 0.82rem;
+      color: var(--gray);
+      margin-bottom: 1.5rem;
+    }
+    .donate-name-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-bottom: 0.8rem;
+    }
+    .sq-input {
+      background: var(--dark3);
+      border: 1px solid rgba(201,160,40,0.2);
+      border-radius: 2px;
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      padding: 0.8rem 1rem;
+      outline: none;
+      width: 100%;
+      transition: border-color 0.3s;
+    }
+    .sq-input:focus { border-color: var(--gold); }
+    .sq-input::placeholder { color: var(--gray); }
+
+    /* ─── MERCH ORDER ─── */
+    .merch-order {
+      background: var(--dark2);
+      border: 1px solid rgba(201,160,40,0.18);
+      border-radius: 4px;
+      padding: 2rem;
+      margin-top: 2rem;
+    }
+    .merch-order h4 {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+    .size-picker {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+    .size-btn {
+      background: var(--dark3);
+      border: 1px solid rgba(201,160,40,0.2);
+      border-radius: 2px;
+      color: var(--light-gray);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0.55rem 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .size-btn:hover, .size-btn.active {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: var(--black);
+    }
+    .qty-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    .qty-row label { font-size: 0.78rem; font-weight: 600; color: var(--light-gray); text-transform: uppercase; letter-spacing: 0.05em; }
+    .qty-control {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid rgba(201,160,40,0.2);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .qty-btn {
+      width: 36px; height: 36px;
+      background: var(--dark3);
+      border: none;
+      color: var(--gold);
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .qty-btn:hover { background: rgba(201,160,40,0.15); }
+    .qty-num {
+      width: 40px;
+      text-align: center;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--white);
+      background: var(--dark2);
+      padding: 0.4rem;
+    }
+    .merch-total {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 900;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+    .merch-total span { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: var(--gray); font-weight: 400; }
+
     /* ─── PROMO FLYER SECTION ─── */
     #promo { background: var(--black); padding: 0; }
     .promo-inner {
@@ -1222,6 +1523,11 @@
       /* Footer */
       footer { padding: 1.5rem 1.25rem; flex-direction: column; text-align: center; gap: 0.5rem; }
 
+      /* Donate */
+      .donate-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .donate-name-row { grid-template-columns: 1fr; }
+      .amount-picker { grid-template-columns: repeat(4, 1fr); }
+
       /* Promo */
       .promo-inner { grid-template-columns: 1fr; }
       .promo-content { padding: 3rem 1.25rem; border-left: none; border-top: 3px solid var(--gold); }
@@ -1248,6 +1554,7 @@
   <a href="#mission" onclick="toggleNav()">Mission</a>
   <a href="#programs" onclick="toggleNav()">Programs</a>
   <a href="#founder" onclick="toggleNav()">Founder</a>
+  <a href="#donate" onclick="toggleNav()">Donate</a>
   <a href="#connect" onclick="toggleNav()">Connect</a>
   <a href="#apply" onclick="toggleNav()">Apply</a>
   <a href="#apply" class="btn-primary" onclick="toggleNav()">Apply Now</a>
@@ -1264,6 +1571,7 @@
     <li><a href="#mission">Mission</a></li>
     <li><a href="#programs">Programs</a></li>
     <li><a href="#founder">Founder</a></li>
+    <li><a href="#donate">Donate</a></li>
     <li><a href="#apply" class="nav-cta">Apply Now</a></li>
   </ul>
   <div class="hamburger" onclick="toggleNav()">
@@ -1601,7 +1909,7 @@
     <p class="section-desc">Join the Program. Partner With Us. Support the Mission. Every role you play helps us build disciplined, empowered young men who lead, earn, and give back.</p>
     <div class="cta-actions">
       <a href="#apply" class="btn-dark">Apply to the Program</a>
-      <a href="mailto:connect@bigbrotherjill.org" class="btn-white-outline">Partner With Us</a>
+      <a href="#donate" class="btn-white-outline">Donate Now</a>
     </div>
   </div>
 </section>
@@ -1632,8 +1940,73 @@
   </div>
 </section>
 
+<!-- DONATE -->
+<section id="donate">
+  <div class="container">
+    <div class="donate-layout">
+      <div class="reveal">
+        <div class="section-label">Support the Mission</div>
+        <h2 class="section-title">Your investment<br>breaks cycles.</h2>
+        <p class="section-desc">Every dollar funds mentorship, programming, and resources for young men who need structure — not just motivation.</p>
+        <div class="donate-impact">
+          <div class="impact-item">
+            <div class="impact-num">$25</div>
+            <p>Covers one workshop session — journaling materials, facilitation, and one young man's seat at the table.</p>
+          </div>
+          <div class="impact-item">
+            <div class="impact-num">$50</div>
+            <p>Funds a week of mentorship check-ins and accountability follow-up for one participant.</p>
+          </div>
+          <div class="impact-item">
+            <div class="impact-num">$100</div>
+            <p>Sponsors one young man through a full month of the Save Your Self program.</p>
+          </div>
+          <div class="impact-item">
+            <div class="impact-num">$250</div>
+            <p>Covers an exposure experience — college visit, career day, or entrepreneurship workshop.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="donate-card reveal reveal-delay-2">
+        <h3>Make a Donation</h3>
+        <p class="sub">Secure payment powered by Square. No account required.</p>
+
+        <div class="amount-picker" id="donateAmounts">
+          <button class="amount-btn" data-amount="25">$25</button>
+          <button class="amount-btn active" data-amount="50">$50</button>
+          <button class="amount-btn" data-amount="100">$100</button>
+          <button class="amount-btn" data-amount="250">$250</button>
+        </div>
+        <div class="custom-amount-wrap">
+          <input type="number" id="customDonateAmount" class="sq-input" placeholder="Or enter custom amount ($)" min="5" />
+        </div>
+
+        <div class="donate-name-row">
+          <input type="text" id="donorFirst" class="sq-input" placeholder="First name" />
+          <input type="text" id="donorLast" class="sq-input" placeholder="Last name" />
+        </div>
+        <input type="email" id="donorEmail" class="sq-input" placeholder="Email address" style="margin-bottom:1rem; display:block; width:100%;" />
+
+        <label class="sq-field-label" style="margin-top:0.5rem;">Card Details</label>
+        <div class="sq-card-wrapper">
+          <div id="card-container"></div>
+        </div>
+
+        <div id="donate-status" class="sq-payment-status"></div>
+
+        <button id="donatePay" class="btn-square">Donate $50</button>
+        <div class="sq-secure-note">
+          <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><rect x="1" y="6" width="10" height="8" rx="1" stroke="#8A8A8A" stroke-width="1.2"/><path d="M3.5 6V4a2.5 2.5 0 015 0v2" stroke="#8A8A8A" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Secured by Square · Your card info is never stored on this site
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- MERCH -->
-<section id="merch">
+<section id="merch" style="background:var(--dark2);">
   <div class="container">
     <div class="merch-layout">
       <div class="merch-img-wrap reveal">
@@ -1642,10 +2015,43 @@
       <div class="merch-content reveal reveal-delay-2">
         <div class="section-label">Represent the Movement</div>
         <h2 class="section-title">Wear what<br>you stand for.</h2>
-        <p>The Save Your Self hoodie isn't just merch — it's a statement. Every piece you wear funds programming, mentorship, and resources for young men who need it most.</p>
-        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-          <a href="mailto:connect@bigbrotherjill.org?subject=Merch Order" class="btn-primary">Order Merch</a>
-          <a href="mailto:connect@bigbrotherjill.org" class="btn-outline">Support the Mission</a>
+        <p>The S.Y.S. hoodie isn't just merch — it's a statement. Every piece you wear funds programming, mentorship, and resources for young men who need it most.</p>
+        <p style="font-size:0.9rem; color:var(--gold); font-weight:600; margin-bottom:0.5rem;">Save Your Self Hoodie — $65</p>
+
+        <div class="merch-order">
+          <h4>Place Your Order</h4>
+          <label class="sq-field-label">Select Size</label>
+          <div class="size-picker" id="sizePicker">
+            <button class="size-btn" data-size="S">S</button>
+            <button class="size-btn active" data-size="M">M</button>
+            <button class="size-btn" data-size="L">L</button>
+            <button class="size-btn" data-size="XL">XL</button>
+            <button class="size-btn" data-size="2XL">2XL</button>
+          </div>
+          <div class="qty-row">
+            <label>Quantity</label>
+            <div class="qty-control">
+              <button class="qty-btn" id="qtyDown">−</button>
+              <div class="qty-num" id="qtyDisplay">1</div>
+              <button class="qty-btn" id="qtyUp">+</button>
+            </div>
+          </div>
+          <div class="merch-total" id="merchTotal">$65 <span>+ shipping</span></div>
+
+          <input type="text" id="merchName" class="sq-input" placeholder="Full name" style="margin-bottom:0.8rem;" />
+          <input type="email" id="merchEmail" class="sq-input" placeholder="Email address" style="margin-bottom:0.8rem;" />
+
+          <label class="sq-field-label">Card Details</label>
+          <div class="sq-card-wrapper">
+            <div id="merch-card-container"></div>
+          </div>
+
+          <div id="merch-status" class="sq-payment-status"></div>
+          <button id="merchPay" class="btn-square" style="margin-top:0.5rem;">Order Now — $65</button>
+          <div class="sq-secure-note" style="margin-top:0.7rem;">
+            <svg width="12" height="14" viewBox="0 0 12 14" fill="none"><rect x="1" y="6" width="10" height="8" rx="1" stroke="#8A8A8A" stroke-width="1.2"/><path d="M3.5 6V4a2.5 2.5 0 015 0v2" stroke="#8A8A8A" stroke-width="1.2" stroke-linecap="round"/></svg>
+            Secured by Square
+          </div>
         </div>
       </div>
     </div>
@@ -1885,30 +2291,69 @@
 </footer>
 
 <script>
-  // NAV scroll effect
+  /* ─── SQUARE CONFIG ───────────────────────────────────────────
+     Client: fill these in from Square Developer Dashboard.
+     AppId + LocationId → developer.squareup.com → Your App → Credentials
+     Switch script src in <head> from sandbox to production URL when going live.
+     paymentEndpoint → your serverless function URL (Netlify/Vercel/Node).
+                       If null, Square Payment Links are used as fallback.
+  ─────────────────────────────────────────────────────────────── */
+  const SQUARE_CONFIG = {
+    appId:           'YOUR_SQUARE_APP_ID',
+    locationId:      'YOUR_SQUARE_LOCATION_ID',
+    paymentEndpoint: null,           // e.g. 'https://yourserver.com/api/charge'
+    merchPrice:      65,             // USD — hoodie price
+    currency:        'USD',
+  };
+
+  /* ─── AUTO-SCROLL TO APPLY ────────────────────────────────────
+     Any link to this site with #apply in the URL will land
+     directly on the application form. Useful for outreach links.
+  ─────────────────────────────────────────────────────────────── */
+  window.addEventListener('load', () => {
+    const hash = window.location.hash;
+    if (hash === '#apply' || new URLSearchParams(window.location.search).get('apply') === 'true') {
+      const applyEl = document.getElementById('apply');
+      if (applyEl) {
+        setTimeout(() => {
+          const offset = applyEl.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top: offset, behavior: 'smooth' });
+        }, 400);
+      }
+    }
+  });
+
+  /* ─── NAV SCROLL ─────────────────────────────────────────────── */
   const navbar = document.getElementById('navbar');
   window.addEventListener('scroll', () => {
     navbar.classList.toggle('scrolled', window.scrollY > 50);
   });
 
-  // Mobile nav
   function toggleNav() {
     document.getElementById('mobileNav').classList.toggle('open');
   }
 
-  // Reveal on scroll
+  /* ─── REVEAL ON SCROLL ────────────────────────────────────────── */
   const reveals = document.querySelectorAll('.reveal');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if (e.isIntersecting) {
-        e.target.classList.add('visible');
-        observer.unobserve(e.target);
-      }
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
     });
   }, { threshold: 0.12 });
   reveals.forEach(el => observer.observe(el));
 
-  // Application form — Formspree AJAX submit
+  /* ─── SMOOTH ANCHOR SCROLL ────────────────────────────────────── */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' });
+      }
+    });
+  });
+
+  /* ─── APPLICATION FORM (Formspree) ─────────────────────────────── */
   const appForm = document.getElementById('applicationForm');
   if (appForm) {
     appForm.addEventListener('submit', async (e) => {
@@ -1917,36 +2362,156 @@
       btn.textContent = 'Submitting...';
       btn.disabled = true;
       try {
-        const res = await fetch(appForm.action, {
-          method: 'POST',
-          body: new FormData(appForm),
-          headers: { Accept: 'application/json' }
-        });
+        const res = await fetch(appForm.action, { method: 'POST', body: new FormData(appForm), headers: { Accept: 'application/json' } });
         if (res.ok) {
           appForm.style.display = 'none';
           document.getElementById('formSuccess').style.display = 'block';
-        } else {
-          btn.textContent = 'Error — Try Again';
-          btn.disabled = false;
-        }
-      } catch {
-        btn.textContent = 'Error — Try Again';
-        btn.disabled = false;
-      }
+        } else { btn.textContent = 'Error — Try Again'; btn.disabled = false; }
+      } catch { btn.textContent = 'Error — Try Again'; btn.disabled = false; }
     });
   }
 
-  // Smooth anchor clicks with nav offset
-  document.querySelectorAll('a[href^="#"]').forEach(a => {
-    a.addEventListener('click', e => {
-      const target = document.querySelector(a.getAttribute('href'));
-      if (target) {
-        e.preventDefault();
-        const offset = target.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top: offset, behavior: 'smooth' });
+  /* ─── SQUARE WEB PAYMENTS SDK ────────────────────────────────────
+     Initializes card forms for Donate and Merch sections.
+     On payment: tokenizes card → POSTs nonce to paymentEndpoint.
+     If paymentEndpoint is null, shows a notice to configure backend.
+  ─────────────────────────────────────────────────────────────────── */
+  let donateCard, merchCard, payments;
+  let selectedDonateAmount = 50;
+  let selectedSize = 'M';
+  let qty = 1;
+
+  async function initSquare() {
+    if (!window.Square) return;
+    if (SQUARE_CONFIG.appId === 'YOUR_SQUARE_APP_ID') return; // not configured yet
+
+    try {
+      payments = Square.payments(SQUARE_CONFIG.appId, SQUARE_CONFIG.locationId);
+
+      // Donate card form
+      donateCard = await payments.card({
+        style: {
+          '.input-container': { borderColor: 'rgba(201,160,40,0.2)', borderRadius: '2px' },
+          '.input-container.is-focus': { borderColor: '#C9A028' },
+          input: { color: '#F5F0E8', fontFamily: 'Inter, sans-serif', fontSize: '15px' },
+          'input::placeholder': { color: '#8A8A8A' },
+        }
+      });
+      await donateCard.attach('#card-container');
+
+      // Merch card form
+      merchCard = await payments.card({
+        style: {
+          '.input-container': { borderColor: 'rgba(201,160,40,0.2)', borderRadius: '2px' },
+          '.input-container.is-focus': { borderColor: '#C9A028' },
+          input: { color: '#F5F0E8', fontFamily: 'Inter, sans-serif', fontSize: '15px' },
+          'input::placeholder': { color: '#8A8A8A' },
+        }
+      });
+      await merchCard.attach('#merch-card-container');
+    } catch (e) {
+      console.warn('Square init error:', e);
+    }
+  }
+
+  async function processPayment({ card, amount, note, statusEl, btn, resetLabel }) {
+    if (!card) {
+      setStatus(statusEl, 'error', 'Square payment form not loaded. Please refresh.');
+      return;
+    }
+    if (!SQUARE_CONFIG.paymentEndpoint) {
+      setStatus(statusEl, 'error', 'Payment endpoint not configured — contact site admin to complete setup.');
+      btn.disabled = false; btn.textContent = resetLabel;
+      return;
+    }
+    const result = await card.tokenize();
+    if (result.status === 'OK') {
+      try {
+        const res = await fetch(SQUARE_CONFIG.paymentEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sourceId: result.token, amount: Math.round(amount * 100), currency: SQUARE_CONFIG.currency, note }),
+        });
+        const data = await res.json();
+        if (res.ok && data.payment?.status === 'COMPLETED') {
+          setStatus(statusEl, 'success', `Payment of $${amount} received. Thank you — you're investing in the next generation.`);
+          btn.textContent = 'Payment Complete ✓';
+        } else {
+          throw new Error(data.message || 'Payment failed');
+        }
+      } catch (err) {
+        setStatus(statusEl, 'error', err.message || 'Payment error. Please try again.');
+        btn.disabled = false; btn.textContent = resetLabel;
       }
+    } else {
+      const errs = (result.errors || []).map(e => e.message).join('. ');
+      setStatus(statusEl, 'error', errs || 'Card error. Please check your details.');
+      btn.disabled = false; btn.textContent = resetLabel;
+    }
+  }
+
+  function setStatus(el, type, msg) {
+    el.className = 'sq-payment-status ' + type;
+    el.textContent = msg;
+  }
+
+  /* ─── DONATE AMOUNT PICKER ─────────────────────────────────────── */
+  document.querySelectorAll('#donateAmounts .amount-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#donateAmounts .amount-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedDonateAmount = parseInt(btn.dataset.amount);
+      document.getElementById('customDonateAmount').value = '';
+      document.getElementById('donatePay').textContent = `Donate $${selectedDonateAmount}`;
     });
   });
+
+  document.getElementById('customDonateAmount')?.addEventListener('input', (e) => {
+    const val = parseFloat(e.target.value);
+    if (val > 0) {
+      selectedDonateAmount = val;
+      document.querySelectorAll('#donateAmounts .amount-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('donatePay').textContent = `Donate $${val}`;
+    }
+  });
+
+  document.getElementById('donatePay')?.addEventListener('click', async () => {
+    const btn = document.getElementById('donatePay');
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
+    const note = `Donation from ${document.getElementById('donorFirst').value} ${document.getElementById('donorLast').value}`.trim();
+    await processPayment({ card: donateCard, amount: selectedDonateAmount, note, statusEl: document.getElementById('donate-status'), btn, resetLabel: `Donate $${selectedDonateAmount}` });
+  });
+
+  /* ─── MERCH SIZE + QTY ─────────────────────────────────────────── */
+  document.querySelectorAll('#sizePicker .size-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#sizePicker .size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedSize = btn.dataset.size;
+    });
+  });
+
+  function updateMerchUI() {
+    const total = SQUARE_CONFIG.merchPrice * qty;
+    document.getElementById('qtyDisplay').textContent = qty;
+    document.getElementById('merchTotal').innerHTML = `$${total} <span>+ shipping</span>`;
+    document.getElementById('merchPay').textContent = `Order Now — $${total}`;
+  }
+  document.getElementById('qtyDown')?.addEventListener('click', () => { if (qty > 1) { qty--; updateMerchUI(); } });
+  document.getElementById('qtyUp')?.addEventListener('click', () => { if (qty < 10) { qty++; updateMerchUI(); } });
+
+  document.getElementById('merchPay')?.addEventListener('click', async () => {
+    const btn = document.getElementById('merchPay');
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
+    const total = SQUARE_CONFIG.merchPrice * qty;
+    const note = `S.Y.S. Hoodie x${qty} (${selectedSize}) — ${document.getElementById('merchName').value}`;
+    await processPayment({ card: merchCard, amount: total, note, statusEl: document.getElementById('merch-status'), btn, resetLabel: `Order Now — $${total}` });
+  });
+
+  // Init Square on load
+  initSquare();
 </script>
 
 </body>
