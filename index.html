@@ -2311,15 +2311,12 @@
      directly on the application form. Useful for outreach links.
   ─────────────────────────────────────────────────────────────── */
   window.addEventListener('load', () => {
-    const hash = window.location.hash;
-    if (hash === '#apply' || new URLSearchParams(window.location.search).get('apply') === 'true') {
-      const applyEl = document.getElementById('apply');
-      if (applyEl) {
-        setTimeout(() => {
-          const offset = applyEl.getBoundingClientRect().top + window.scrollY - 80;
-          window.scrollTo({ top: offset, behavior: 'smooth' });
-        }, 400);
-      }
+    const applyEl = document.getElementById('apply');
+    if (applyEl) {
+      setTimeout(() => {
+        const offset = applyEl.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top: offset, behavior: 'smooth' });
+      }, 400);
     }
   });
 
